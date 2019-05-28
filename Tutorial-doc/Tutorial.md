@@ -82,7 +82,7 @@ Try to connect to ProxySQL:
 mysql -uroot -proot -h 127.0.0.1 -P16033
 ```
 
-Try to conect on other 2 instances:
+Try to connect on other 2 instances:
 ```
 mysql -uroot -proot -h 127.0.0.1 -P16043
 ```
