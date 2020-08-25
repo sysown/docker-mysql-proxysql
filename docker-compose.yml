@@ -1,21 +1,21 @@
 version: "2.0"
 services:
   mysql1:
-    image: mysql:5.7
+    build: ./conf/mysql
     ports:
       - "13306:3306"
     volumes:
-      - ./conf/mysql/mysql1:/etc/mysql/conf.d
+      - ./conf/mysql/mysql1:/etc/mysql
     networks:
       - backend
     environment:
       - MYSQL_ROOT_PASSWORD=root
   mysql2:
-    image: mysql:5.7
+    build: ./conf/mysql
     ports:
       - "13307:3306"
     volumes:
-      - ./conf/mysql/mysql2:/etc/mysql/conf.d
+      - ./conf/mysql/mysql2:/etc/mysql
     networks:
       - backend
     depends_on:
@@ -23,50 +23,27 @@ services:
     environment:
       - MYSQL_ROOT_PASSWORD=root
   mysql3:
-    image: mysql:5.7
+    build: ./conf/mysql
     ports:
       - "13308:3306"
     volumes:
-      - ./conf/mysql/mysql3:/etc/mysql/conf.d
+      - ./conf/mysql/mysql3:/etc/mysql
     networks:
       - backend
     depends_on:
       - mysql1
     environment:
       - MYSQL_ROOT_PASSWORD=root
-  binlog_reader1:
-    image: renecannao/proxysql_mysqlbinlog:ubuntu18
+  replica1:
+    image: mysql:8.0
     ports:
-      - "14306:6020"
+      - "13309:3306"
     volumes:
-      - ./entrypoint/reader/reader1:/etc/proxysql_binlog_reader
-    entrypoint: /etc/proxysql_binlog_reader/entrypoint.sh
+      - ./conf/mysql/replica1:/etc/mysql/conf.d
     networks:
       - backend
-    depends_on:
-      - mysql1
-  binlog_reader2:
-    image: renecannao/proxysql_mysqlbinlog:ubuntu18
-    ports:
-      - "14307:6020"
-    volumes:
-      - ./entrypoint/reader/reader2:/etc/proxysql_binlog_reader
-    entrypoint: /etc/proxysql_binlog_reader/entrypoint.sh
-    networks:
-      - backend
-    depends_on:
-      - mysql2
-  binlog_reader3:
-    image: renecannao/proxysql_mysqlbinlog:ubuntu18
-    ports:
-      - "14308:6020"
-    volumes:
-      - ./entrypoint/reader/reader3:/etc/proxysql_binlog_reader
-    entrypoint: /etc/proxysql_binlog_reader/entrypoint.sh
-    networks:
-      - backend
-    depends_on:
-      - mysql3
+    environment:
+      - MYSQL_ROOT_PASSWORD=root
   proxysql1:
     image: proxysql/proxysql:latest
     ports:
@@ -81,76 +58,6 @@ services:
       - mysql3
     networks:
       - frontend
-      - backend
-  proxysql2:
-    image: proxysql/proxysql:latest
-    ports:
-      - "16043:6033"
-      - "16042:6032"
-    volumes:
-      - ./conf/proxysql/proxysql.cnf:/etc/proxysql.cnf
-    depends_on:
-      - mysql1
-      - mysql2
-      - mysql3
-    networks:
-      - frontend
-      - backend
-  proxysql3:
-    image: proxysql/proxysql:latest
-    ports:
-      - "16053:6033"
-      - "16052:6032"
-    volumes:
-      - ./conf/proxysql/proxysql.cnf:/etc/proxysql.cnf
-    depends_on:
-      - mysql1
-      - mysql2
-      - mysql3
-    networks:
-      - frontend
-      - backend
-  orc1:
-    build: ./conf/orchestrator/
-    ports:
-      - "23101:3000"
-    volumes:
-      - ./conf/orchestrator/orc1/orchestrator.conf.json:/etc/orchestrator.conf.json
-      - ./conf/orchestrator/remove-proxysql-host.bash:/root/remove-proxysql-host.bash
-    depends_on:
-      - mysql1
-      - mysql2
-      - mysql3
-      - proxysql1
-    networks:
-      - backend
-  orc2:
-    build: ./conf/orchestrator/
-    ports:
-      - "23102:3000"
-    volumes:
-      - ./conf/orchestrator/orc2/orchestrator.conf.json:/etc/orchestrator.conf.json
-      - ./conf/orchestrator/remove-proxysql-host.bash:/root/remove-proxysql-host.bash
-    depends_on:
-      - mysql1
-      - mysql2
-      - mysql3
-      - proxysql1
-    networks:
-      - backend
-  orc3:
-    build: ./conf/orchestrator/
-    ports:
-      - "23103:3000"
-    volumes:
-      - ./conf/orchestrator/orc3/orchestrator.conf.json:/etc/orchestrator.conf.json
-      - ./conf/orchestrator/remove-proxysql-host.bash:/root/remove-proxysql-host.bash
-    depends_on:
-      - mysql1
-      - mysql2
-      - mysql3
-      - proxysql1
-    networks:
       - backend
 networks:
   frontend:
