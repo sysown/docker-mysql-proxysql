@@ -1,5 +1,5 @@
-ProxySQL / Orchestrator / MySQL Docker Testing
-==============================================
+ProxySQL / Galera Docker Testing
+================================
 
 This repository contains a docker-compose.yml used to launch a small cluster consisting of 3x
 MySQL 5.7 containers (1x Master and 2x Slaves), 3x Orchestrator nodes connected via RAFT and 
