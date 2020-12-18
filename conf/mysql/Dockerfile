@@ -17,4 +17,6 @@ RUN apt-get install -y galera-4 galera-arbitrator-4 mysql-wsrep-8.0 rsync
 RUN chown -R mysql:mysql /var/lib/mysql
 RUN mkdir -p /var/run/mysqld/ && chown -R mysql:mysql /var/run/mysqld
 
+RUN apt-get clean
+
 ENTRYPOINT ["mysqld"]
