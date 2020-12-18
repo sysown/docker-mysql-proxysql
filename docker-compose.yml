@@ -1,6 +1,7 @@
 version: "2.0"
 services:
   mysql1:
+    image: "proxysql/galera:latest"
     build: ./conf/mysql
     ports:
       - "13306:3306"
@@ -11,6 +12,7 @@ services:
     environment:
       - MYSQL_ROOT_PASSWORD=root
   mysql2:
+    image: "proxysql/galera:latest"
     build: ./conf/mysql
     ports:
       - "13307:3306"
@@ -23,6 +25,7 @@ services:
     environment:
       - MYSQL_ROOT_PASSWORD=root
   mysql3:
+    image: "proxysql/galera:latest"
     build: ./conf/mysql
     ports:
       - "13308:3306"
